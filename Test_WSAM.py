@@ -239,7 +239,7 @@ if __name__ == '__main__':
     styles_type = [78020, 8050, 1020, 6050, 100, 76300]
     #styles_type = np.random.randint(Stylenet.size, size=1000)
     #alphas = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-    alphas = [0.0] #np.arange(0.0, 1.0, 0.2)
+    alphas = [0.5] #np.arange(0.0, 1.0, 0.2)
 
     models_weights = models_weights[:4][3]
     architecture = models_weights["arch"]
@@ -287,11 +287,11 @@ if __name__ == '__main__':
         alpha_styles = len(styles_type)*len(alphas)
         
         print("Styling ... ")
-        for style_type in styles_type:
+        for i, style_type in enumerate(styles_type):
             sam = np.float32(0.0)
             sam_weight = np.float32(0.0)
             sam_no = np.float32(0.0)
-            for alpha in alphas:
+            for j, alpha in enumerate(alphas):
                 alpha=round(alpha,2)
 
                 print("Styling image: ", name[0]," style number:", style_type, "intensity (alpha):", alpha)
@@ -310,6 +310,10 @@ if __name__ == '__main__':
                 sam = sam + np.float32(np.multiply(acc_styled, heatmap_styled))
                 sam_weight = sam_weight + np.float32(np.multiply(acc_styled*alpha, heatmap_styled))
                 sam_no = sam_no + np.float32(heatmap_styled)
+                
+                wsam_matrix_po[i][j] = np.float32(np.multiply(acc_styled, heatmap_styled))
+                wsam_matrix_we[i][j] = np.float32(np.multiply(acc_styled*alpha, heatmap_styled))
+                wsam_matrix_no[i][j] = np.float32(heatmap_styled)
             
             wsam_po = wsam_po + sam
             wsam_we = wsam_we + sam_weight
