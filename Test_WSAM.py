@@ -240,6 +240,7 @@ if __name__ == '__main__':
     #styles_type = np.random.randint(Stylenet.size, size=1000)
     #alphas = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
     alphas = [0.5] #np.arange(0.0, 1.0, 0.2)
+    data_classes = 11
 
     models_weights = models_weights[:4][3]
     architecture = models_weights["arch"]
@@ -247,7 +248,7 @@ if __name__ == '__main__':
     output_path = f"outputs/{architecture}/"
     verifyDir(output_path)
 
-    for dir_ in range(1,11):
+    for dir_ in range(1,data_classes):
       
       content_dataset = Dataset(f"data/STL_10/{dir_}/", 256,256,test=True)
       content_loader = torch.utils.data.DataLoader(dataset=content_dataset, batch_size=10, shuffle=False, num_workers=16, drop_last=True)
@@ -258,7 +259,7 @@ if __name__ == '__main__':
       for it, (img, name) in enumerate(content_loader):
         print("Image nro:", it, "img name:", name[0])
         
-        if it==5:
+        if it==10:
             break
         
         output_style_dir = f"{output_path}/{dir_}/{str(name[0])}/"
@@ -311,9 +312,9 @@ if __name__ == '__main__':
                 sam_weight = sam_weight + np.float32(np.multiply(acc_styled*alpha, heatmap_styled))
                 sam_no = sam_no + np.float32(heatmap_styled)
                 
-                wsam_matrix_po[i][j] = np.float32(np.multiply(acc_styled, heatmap_styled))
-                wsam_matrix_we[i][j] = np.float32(np.multiply(acc_styled*alpha, heatmap_styled))
-                wsam_matrix_no[i][j] = np.float32(heatmap_styled)
+                #wsam_matrix_po[i][j] = np.float32(np.multiply(acc_styled, heatmap_styled))
+                #wsam_matrix_we[i][j] = np.float32(np.multiply(acc_styled*alpha, heatmap_styled))
+                #wsam_matrix_no[i][j] = np.float32(heatmap_styled)
             
             wsam_po = wsam_po + sam
             wsam_we = wsam_we + sam_weight
@@ -344,6 +345,8 @@ if __name__ == '__main__':
         cv2.imwrite(f"{wsam_output_dir}/wsam_norm.jpg", wsam_po_norm)
         cv2.imwrite(f"{wsam_output_dir}/wsam_weight_norm.jpg", wsam_we_norm)
         cv2.imwrite(f"{wsam_output_dir}/wsam_no_norm.jpg", wsam_no_norm)
+        
+        cv2.imwrite(f"{wsam_output_dir}/wsam_no_norm_cmap.jpg", cv2.applyColorMap(wsam_no_norm, cv2.COLORMAP_JET))
         
         # cv2 normalize
         wsam_po_cv_norm = cv2.normalize(heatmap_nostyled, wsam_po, 0, 255, cv2.NORM_MINMAX)
