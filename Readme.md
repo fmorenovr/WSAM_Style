@@ -1,5 +1,5 @@
 # WSAM_Style
-Visual explanations of Style augmentation influence.
+Visual explanations of Style augmentation influence. [link](http://www.visualdslab.com/static/files/papers/2023-WSAM-VISAPP.pdf)
 
 ## Installation
 
